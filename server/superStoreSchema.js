@@ -1,0 +1,29 @@
+const mongoose = require('mongoose');
+const {Schema} = mongoose;
+
+const superStoresSchema = new Schema({
+    "Category": String,
+    "City": String,
+    "Country/Region": String,
+    "Customer ID": String,
+    "Customer Name": String,
+    "Discount": Number,
+    "Order Date": Date,
+    "Order ID": String,
+    "Product ID": String,
+    "Product Name": String,
+    "Profit": Number,
+    "Quantity": Number,
+    "Region": String,
+    "ROW ID": Number,
+    "Sales": Number,
+    "Segment": String,
+    "Ship Date": Date,
+    "Ship Mode": String,
+    "State": String,
+    "Sub-Category": String,
+});
+
+module.exports = {
+    superStoresSchema: superStoresSchema
+}
