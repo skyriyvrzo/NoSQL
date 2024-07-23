@@ -1,6 +1,7 @@
 import {BrowserRouter, Link, Route, Routes} from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import SuperStorePage from './pages/SuperStorePage';
+import OrderFormPage from './pages/OrderFormPage';
 
 function App() {
   return (
@@ -33,10 +34,10 @@ function App() {
                 <Link to={"/"}>Home</Link>
               </li>
               <li>
-              <Link to={"/superstore"}>Super Store</Link>
+                <Link to={"/superstore"}>Super Store</Link>
               </li>
               <li>
-                <a>Item 3</a>
+                <Link to={"/order/create"}>Create Order</Link>
               </li>
             </ul>
           </div>
@@ -51,7 +52,7 @@ function App() {
               <Link to={"/superstore"}>Super Store</Link>
             </li>
             <li>
-              <a>Item 3</a>
+              <Link to={"/order/create"}>Create Order</Link>
             </li>
           </ul>
         </div>
@@ -60,6 +61,8 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage/>}></Route>
             <Route path="/superstore" element={<SuperStorePage/>}></Route>
+            <Route path="/order/create" element={<OrderFormPage/>}></Route>
+            <Route path="/order/edit/:_id" element={<OrderFormPage/>}></Route>
           </Routes>
         </div>
       </BrowserRouter>

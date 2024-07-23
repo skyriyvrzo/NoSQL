@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Swal from 'sweetalert2'
 
 export default function SuperStorePage() {
   const url = "http://localhost:5000/getAllData";
@@ -8,6 +9,40 @@ export default function SuperStorePage() {
   const [pageNo, setPageNo] = useState(1); //หน้าปัจจุบัน
   const [totalRecords, setTotalRecords] = useState(0); //จำนวนข้อมูลทั้งหมด 10933 / 10 = 1093.3 => 1094
   const [totalPages, setTotalPages] = useState(1);
+
+const onEdit = (_id) => {
+  window.location = `/order/edit/${_id}`;
+}
+
+const onDelete = (_id) => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+  }).then((result) => {
+    if(result.isConfirmed) {
+      axios.delete(`http://localhost:5000/deleteProduct/${_id}`).then((response) => {
+        if(response.data.status_code == 200) {
+          fetchData();
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your file has been deleted",
+            icon: "success"
+          });
+        } else {
+          Swal.fire({
+            title: "Not found!",
+            text: "Not found data",
+            icon: "error"
+          });
+        }
+      })
+    }
+  })
+}
 
   useEffect(() => {
     fetchData();
@@ -117,11 +152,11 @@ export default function SuperStorePage() {
             {data.map((record, record_index) => {
               return (
                 <tr className="hover" key={`${record['_id']}`}>
-                  <td key={`edit${record["id"]}`}>
-                    <button className="btn btn-outline btn-warning">Edit</button>
+                  <td key={`edit${record["_id"]}`}>
+                    <button className="btn btn-outline btn-warning" onClick={() => onEdit(record["_id"])}>Edit</button>
                   </td>
                   <td key={`delete${record["_id"]}`}>
-                    <button className="btn btn-outline btn-error">Delete</button>
+                    <button className="btn btn-outline btn-error" onClick={() => onDelete(record["_id"])}>Delete</button>
                   </td>
                   {Object.keys(record).map((key, key_index) => {
                     return <td key={`${record_index}${key_index}`}>{record[key]}</td>;
