@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const {Schema} = mongoose;
+const mongoose = require('mongoose')
+const { Schema } = mongoose;
 
-const superStoresSchema = new Schema({
+const superStoreSchema = new Schema ({
     "Category": String,
     "City": String,
     "Country/Region": String,
@@ -15,15 +15,15 @@ const superStoresSchema = new Schema({
     "Profit": Number,
     "Quantity": Number,
     "Region": String,
-    "ROW ID": Number,
+    "Row ID": Number,
     "Sales": Number,
     "Segment": String,
     "Ship Date": Date,
     "Ship Mode": String,
     "State": String,
     "Sub-Category": String,
-});
+})
 
 module.exports = {
-    superStoresSchema: superStoresSchema
+    superStoreSchema: superStoreSchema
 }
