@@ -107,7 +107,6 @@ app.delete('/deleteProduct/:_id', async(req, res) => {
     res.json({
         status_code: model ? 200 : 404
     });
-    
 });
 
 app.get('/getData/:_id', async(req, res) => {
