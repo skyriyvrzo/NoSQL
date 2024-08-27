@@ -203,4 +203,87 @@ app.get('/getOrders', async(req, res) => {
     });
 });
 
+app.get('/chartSaleAndProfit', async (req, res) => {
+    const {year} = req.query;
+    const superStores = mongoose.model("SuperStores", superStoreSchema.superStoreSchema);
+    const result = await superStores.aggregate([
+        {
+            $project: {
+                "Product Name": 1,
+                _id: 0,
+                "Order Date": 1,
+                "Sales": 1,
+                "Profit": 1,
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    month: {
+                        $month: "$Order Date"
+                    },
+                    year: {
+                        $year: "$Order Date"
+                    }
+                },
+                total_sales: {
+                    $sum: "$Sales"
+                },
+                total_profits: {
+                    $sum: "$Profit"
+                }
+            }
+        },
+        {
+            $match: {
+                "_id.year": {
+                    $ne: null,
+                    $eq: parseInt(year)
+                }
+            }
+        },
+        {
+            $sort: {
+                "_id.year": 1,
+                "_id.month": 1
+            }
+        }
+    ]);
+    res.json(result)
+});
+
+app.get('/getYear', async (req, res) => {
+    const superStores = mongoose.model("SuperStores", superStoreSchema.superStoreSchema);
+    const result = await superStores.aggregate([
+        {
+            $project: {
+                _id: 0,
+                "Order Date": 1,
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    year: {
+                        $year: "$Order Date"
+                    }
+                }
+            }
+        },
+        {
+            $match: {
+                "_id.year": {
+                    $ne: null,
+                }
+            }
+        },
+        {
+            $sort: {
+                "_id.year": 1,
+            }
+        }
+    ]);
+    res.json(result.map(e1 => e1._id.year));
+});
+
 module.exports = app;

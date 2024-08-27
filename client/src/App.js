@@ -2,6 +2,7 @@ import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import OrderFormPage from "./pages/OrderFormPage";
 import SuperStorePage from "./pages/SuperStorePage";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -38,6 +39,9 @@ function App() {
                   <Link to={"/"}>Home</Link>
                 </li>
                 <li>
+                  <Link to={"/dashboard"}>Dashboard</Link>
+                </li>
+                <li>
                   <Link to={"/superstore"}>Super Store</Link>
                 </li>
                 <li>
@@ -53,6 +57,9 @@ function App() {
                 <Link to={"/"}>Home</Link>
               </li>
               <li>
+                  <Link to={"/dashboard"}>Dashboard</Link>
+                </li>
+              <li>
                 <Link to={"/superstore"}>Super Store</Link>
               </li>
               <li>
@@ -64,6 +71,7 @@ function App() {
         <div className="container mx-auto">
           <Routes>
             <Route path="/" element={<HomePage />}></Route>
+            <Route path="/dashboard" element={<Dashboard />}></Route>
             <Route path="/superstore" element={<SuperStorePage />}></Route>
             <Route path="/order/create" element={<OrderFormPage key={"add"}/>}></Route>
             <Route path="/order/edit/:_id" element={<OrderFormPage key={"edit"}/>}></Route>
