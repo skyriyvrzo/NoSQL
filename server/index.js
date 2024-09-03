@@ -286,4 +286,46 @@ app.get('/getYear', async (req, res) => {
     res.json(result.map(e1 => e1._id.year));
 });
 
+app.get('/chartTopTen', async (req, res) => {
+    const {year, month} = req.query;
+    const superStores = mongoose.model("SuperStores", superStoreSchema.superStoreSchema);
+    const result = await superStores.aggregate([
+        {
+            $project: {
+                "Product Name": 1,
+                _id: 0,
+                "Order Date": 1,
+                "Quantity": 1,
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    productName: "$Product Name",
+                    year: {$year: "$Order Date"},
+                    month: {$month: "$Order Date"}
+                },
+                total_quantity: {$sum: "$Quantity"}
+            }
+        }, {
+            $match: {
+                "_id.year": {
+                    $ne: null,
+                    $eq: parseInt(year),
+                },
+                "_id.month": {
+                    $ne: null,
+                    $eq: parseInt(month),
+                }
+            }
+        },
+        {
+            $sort: {
+                "total_quantity": -1
+            }
+        }
+    ]).limit(10);
+    res.json(result)
+});
+
 module.exports = app;
