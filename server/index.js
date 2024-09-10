@@ -328,4 +328,35 @@ app.get('/chartTopTen', async (req, res) => {
     res.json(result)
 });
 
+app.get('/topTenDetail', async (req, res) => {
+    const { year, month, productName } = req.query;
+    const superStores = mongoose.model("SuperStores", superStoreSchema.superStoreSchema);
+    const result = await superStores.aggregate([
+        {
+            $project: {
+                _id: 0,
+                "Order ID": 1,
+                "Order Date": 1,
+                "Product ID": 1,
+                "Product Name": 1,
+                "Sales": 1,
+                "Profit": 1,
+                "Quantity": 1
+            }
+        },
+        {
+            $match: {
+                $expr: {
+                    $and: [
+                        { $eq: [{$year: "$Order Date"}, parseInt(year)] },
+                        { $eq: [{$month: "$Order Date"}, parseInt(month)] }
+                    ]
+                },
+                "Product Name": productName
+            }
+        },
+    ]);
+    res.json(result)
+});
+
 module.exports = app;

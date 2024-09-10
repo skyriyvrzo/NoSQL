@@ -1,19 +1,29 @@
-import Chart from "react-apexcharts";
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import Chart from "react-apexcharts";
+import ModalComponent from "./components/ModalComponent";
 
 export default function Dashboard() {
     const [options, setOptions] = useState({});
     const [series, setSeries] = useState([]);
     const [years, setYears] = useState([]);
+
+    const [options2, setOptions2] = useState({});
+    const [series2, setSeries2] = useState([]);
+    const [yearSelect, setYearSelect] = useState(2017);
+    const [monthSelect, setMonthSelect] = useState(1);
+    
     const monthList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const [showModal, setShowModal] = useState(false);
+    const [modalContent, setModalContent] = useState(null);
 
     const getYear = () => {
         axios.get(`http://localhost:5000/getYear`).then((response) => {
             setYears(response.data);
         })
     }
-
+    
     const getChart = (year = 2017) => {
         axios.get(`http://localhost:5000/chartSaleAndProfit`, { params: { year: year } }).then((response) => {
             setOptions({
@@ -37,17 +47,26 @@ export default function Dashboard() {
         })
     }
 
-    const [options2, setOptions2] = useState({});
-    const [series2, setSeries2] = useState([]);
-    const [yearSelect, setYearSelect] = useState(2017);
-    const [monthSelect, setMonthSelect] = useState(1);
     const getTopTen = () => {
         axios.get(`http://localhost:5000/chartTopTen`, { params: { year: yearSelect, month: monthSelect } }).then((response) => {
-            console.log(response.data)
+            console.log("Data" + response.data)
             setOptions2({
                 chart: {
                     width: 380,
                     type: 'pie',
+                    events: {
+                        dataPointSelection: (event, chartContext, config) => {
+                            const productName = config.w.config.labels[config.dataPointIndex];
+                            const quantity = response.data[config.dataPointIndex].total_quantity;
+                            setModalContent({
+                                productName,
+                                quantity,
+                                year: yearSelect,
+                                month: monthSelect
+                            });
+                            setShowModal(true);
+                        }
+                    }
                 },
                 labels: response.data.map(e1 => e1._id.productName),
                 responsive: [{
@@ -88,6 +107,8 @@ export default function Dashboard() {
         getTopTen();
     }, [yearSelect, monthSelect])
 
+    const handleCloseModal = () => setShowModal(false); 
+
     return <>
         <h1>Dashboard</h1>
         <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -112,8 +133,12 @@ export default function Dashboard() {
                         }
                     </select>
                 </div>
-                <Chart options={options2} series={series2} type="pie"></Chart>
+                <Chart options={options2} series={series2} type="pie"/>
             </div>
         </div>
-    </>;
+
+        {showModal && (
+            <ModalComponent handleCloseModal={handleCloseModal} modalContent = {modalContent}/>
+        )}
+    </>;    
 }
